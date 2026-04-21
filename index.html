@@ -4,7 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Microsoft Entra Agent ID: How Identity Works for AI Agents</title>
-<meta name="description" content="A visual guide to Microsoft Entra Agent ID: the hierarchical identity model and authentication flows that power AI agents in Microsoft Entra ID.">
+<meta name="description" content="An interactive visual reference for Microsoft Entra Agent ID: the hierarchical identity model and authentication flows that power AI agents in Microsoft Entra ID.">
+<meta property="og:title" content="Microsoft Entra Agent ID: How Identity Works for AI Agents">
+<meta property="og:description" content="Interactive visual breakdown of Microsoft Entra Agent ID: identity hierarchy, authentication flows, and security controls for AI agents.">
+<meta property="og:image" content="https://contosec.com/articles/EntraAgentID/unified-view-full.png">
+<meta property="og:url" content="https://contosec.com/articles/EntraAgentID/">
+<meta property="og:type" content="article">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://contosec.com/articles/EntraAgentID/unified-view-full.png">
 <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
 <style>
 
@@ -377,7 +384,6 @@ function toggleTheme() {
 
 <div class="topbar" id="site-topbar">
     <button class="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode"><iconify-icon icon="fluent:weather-moon-24-regular" width="16"></iconify-icon></button>
-    <a href="https://github.com/carlossuarez-msft" class="topbar-link" target="_blank"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg> View on GitHub</a>
 </div>
 <script>
 (function(){var t=document.documentElement.getAttribute('data-theme');var i=document.querySelector('#site-topbar .theme-toggle iconify-icon');if(i)i.setAttribute('icon',t==='dark'?'fluent:weather-sunny-24-regular':'fluent:weather-moon-24-regular');})();
@@ -408,7 +414,7 @@ function toggleTheme() {
 <div id="root"></div>
 
 <footer class="footer">
-    Created by <a href="https://github.com/carlossuarez-msft" target="_blank">Carlos Suarez</a> &bull; Sources: <a href="https://learn.microsoft.com/en-us/entra/agent-id/identity-platform/key-concepts" target="_blank">Microsoft Learn</a>
+    Sources: <a href="https://learn.microsoft.com/en-us/entra/agent-id/identity-platform/key-concepts" target="_blank">Microsoft Learn</a>
     <br><span style="font-size:11px;opacity:0.7">(Content reflects the sources as of the date of retrieval and may not reflect subsequent updates.)</span>
 </footer>
 
@@ -445,19 +451,19 @@ const C = {
     relationships: [{ target: 'principal', label: 'Instantiated as an agent identity blueprint principal per tenant' },{ target: 'identity', label: 'Creates agent identities (one-to-many)' }] },
   identity: { name: 'Agent Identity', icon: 'fluent:bot-24-regular', category: 'Core', color: '#50E6FF', initial: 'A',
     definition: 'The primary identity an AI agent uses to authenticate. Has no credentials of its own and authenticates via tokens from its parent blueprint.',
-    keyFacts: ['No credentials of its own','Always single-tenant regardless of blueprint tenancy','Belongs to exactly one parent blueprint','Can operate as interactive or autonomous'],
+    keyFacts: ['No credentials of its own','Always single-tenant regardless of blueprint tenancy','Belongs to exactly one parent blueprint','Can operate with delegated access or own access'],
     relationships: [{ target: 'blueprint', label: 'Child of one blueprint' },{ target: 'useraccount', label: 'Optionally paired with a user account (1:1)' }] },
-  interactive: { name: 'Interactive Agents', icon: 'fluent:chat-24-regular', category: 'Pattern', color: '#10B981', initial: 'I',
-    definition: 'Agents that sign in a user and act on their behalf using delegated permissions.',
-    keyFacts: ['Granted delegated permissions','Act on behalf of the signed-in user','Tokens called \u201cuser tokens\u201d','Use the agent on-behalf-of flow','\u201cInteractive\u201d refers to the user relationship, not browser sign-in'],
+  interactive: { name: 'Agents with Delegated Access', icon: 'fluent:chat-24-regular', category: 'Pattern', color: '#10B981', initial: 'I',
+    definition: 'Agents that sign in a user and act on their behalf using delegated permissions. Formerly known as "OBO agents."',
+    keyFacts: ['Granted delegated permissions','Act on behalf of the signed-in user','Tokens called \u201cuser tokens\u201d','Use the delegated access (OBO) flow','\u201cDelegated access\u201d means the agent acts with user-scoped permissions, not browser sign-in'],
     relationships: [{ target: 'identity', label: 'An operational mode of agent identities' }] },
   useraccount: { name: 'Agent\u2019s User Account', icon: 'fluent:bot-sparkle-24-regular', category: 'Optional', color: '#F59E0B', initial: 'U',
     definition: 'A specialized nonhuman user identity (not a regular human account) paired 1:1 with an agent identity. Created when the agent needs to act as a digital worker in systems that require a user object, such as Exchange mailboxes, Teams channels, or HR systems. Has no passwords and cannot sign in interactively; it authenticates only through its parent agent identity. Can be assigned Microsoft 365 licenses for resource provisioning. Permissions are similar to guest users and cannot include privileged admin roles.',
     keyFacts: ['Paired 1:1 with an agent identity','Both the identity and account must exist','Required only for user-object systems','Can be impersonated by only one identity'],
     relationships: [{ target: 'identity', label: 'Paired with an agent identity' }] },
-  autonomous: { name: 'Autonomous Agents', icon: 'fluent:bot-sparkle-24-regular', category: 'Pattern', color: '#EC4899', initial: 'X',
-    definition: 'Agents that perform actions using their own identity. They run in the background, make autonomous decisions, and use app-only permissions.',
-    keyFacts: ['Use app-only permissions','Often run as background processes','Tokens called \u201cagent tokens\u201d','Use the autonomous app flow or user account flow'],
+  autonomous: { name: 'Agents with Own Access', icon: 'fluent:bot-sparkle-24-regular', category: 'Pattern', color: '#EC4899', initial: 'X',
+    definition: 'Agents that perform actions using their own identity. They run in the background, make autonomous decisions, and use app-only permissions. Formerly known as "non-OBO agents."',
+    keyFacts: ['Use app-only permissions','Often run as background processes','Tokens called \u201cagent tokens\u201d','Use the own access (autonomous) flow or user account flow'],
     relationships: [{ target: 'identity', label: 'An operational mode of agent identities' }] },
 };
 
@@ -500,9 +506,9 @@ const RESOURCES = {
 };
 
 const FLOWS = {
-  obo: { name: 'Agent On-Behalf-Of', accent: '#0078D4', icon: 'fluent:people-swap-24-regular',
-    card: 'Agents operating on behalf of signed-in users using OAuth 2.0 OBO flows with agent-specific impersonation.',
-    summary: 'User delegation via standard OAuth 2.0 OBO flows with agent-specific impersonation. The agent identity uses delegated permissions and requires user consent. Supported grant types: client_credentials, jwt-bearer, refresh_token.',
+  obo: { name: 'Delegated Access (OBO)', accent: '#0078D4', icon: 'fluent:people-swap-24-regular',
+    card: 'Agents with delegated access operating on behalf of signed-in users using OAuth 2.0 OBO flows with agent-specific impersonation.',
+    summary: 'Delegated access via standard OAuth 2.0 On-Behalf-Of flows with agent-specific impersonation. The agent identity uses delegated permissions and requires user consent. Supported grant types: client_credentials, jwt-bearer, refresh_token.',
     participants: [
       { label: 'User', icon: 'person-24-filled', color: '#0078D4' },
       { label: 'Client', icon: 'window-apps-24-filled', color: '#0078D4' },
@@ -518,9 +524,9 @@ const FLOWS = {
       { f:3, t:4, label: 'OBO Token Exchange (T1 + Tc)', detail: 'Agent identity sends OBO request with T1 (client assertion) and Tc (user token).' },
       { f:4, t:3, label: 'Return Resource Token (TR)', detail: 'Entra ID validates T1(aud) and Tc(aud) match the blueprint client ID, returns resource token.' },
       { f:3, t:5, label: 'Access Resource with TR', detail: 'Agent identity accesses the resource on behalf of the user.' }]},
-  autonomous: { name: 'Autonomous App', accent: '#E3008C', icon: 'fluent:bot-sparkle-24-regular',
-    card: 'App-only operations where agent identities act autonomously without user context.',
-    summary: 'App-only operations without user context. The blueprint impersonates the agent identity to obtain a token for itself. Only app-only permissions apply, granted by tenant administrators. Agent identities are always single-tenant.',
+  autonomous: { name: 'Own Access (Autonomous)', accent: '#E3008C', icon: 'fluent:bot-sparkle-24-regular',
+    card: 'Agents with own access acting autonomously without user context using app-only permissions.',
+    summary: 'Own access (app-only) operations without user context. The blueprint impersonates the agent identity to obtain a token for itself. Only app-only permissions apply, granted by tenant administrators. Agent identities are always single-tenant.',
     participants: [
       { label: 'Agent\nBlueprint', icon: 'document-copy-24-filled', color: '#E3008C' },
       { label: 'Agent\nIdentity', icon: 'bot-sparkle-24-filled', color: '#E3008C' },
@@ -625,60 +631,83 @@ const IC = {}; const RC = {};
 function agentSvg(color){return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><path d="M22 16 L10 32 L22 48" stroke="${color}" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M42 16 L54 32 L42 48" stroke="${color}" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><line x1="36" y1="12" x2="28" y2="52" stroke="${color}" stroke-width="5" stroke-linecap="round"/></svg>`}
 function flowSvg(color){return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><path d="M14 32H40" stroke="${color}" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M36 20L52 32L36 44" stroke="${color}" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`}
 function shieldSvg(color){return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><path d="M32 8L52 18V36Q52 52 32 58Q12 52 12 36V18Z" stroke="${color}" stroke-width="3.5" fill="none" stroke-linejoin="round"/><path d="M24 34L30 40L42 26" stroke="${color}" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`}
+function rbacSvg(color){return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><circle cx="24" cy="20" r="8" stroke="${color}" stroke-width="3.5" fill="none"/><path d="M10 52v-4a14 14 0 0 1 28 0v4" stroke="${color}" stroke-width="3.5" fill="none" stroke-linecap="round"/><circle cx="44" cy="22" r="6" stroke="${color}" stroke-width="3" fill="none"/><path d="M50 52v-2a10 10 0 0 0-8-9.7" stroke="${color}" stroke-width="3" fill="none" stroke-linecap="round"/></svg>`}
+function apiPermSvg(color){return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><circle cx="42" cy="22" r="12" stroke="${color}" stroke-width="3.5" fill="none"/><line x1="33" y1="31" x2="12" y2="52" stroke="${color}" stroke-width="3.5" stroke-linecap="round"/><line x1="12" y1="52" x2="22" y2="52" stroke="${color}" stroke-width="3.5" stroke-linecap="round"/><line x1="20" y1="42" x2="28" y2="42" stroke="${color}" stroke-width="3.5" stroke-linecap="round"/></svg>`}
+function appPermSvg(color){return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><circle cx="32" cy="32" r="10" stroke="${color}" stroke-width="3.5" fill="none"/><path d="M32 8v8M32 48v8M8 32h8M48 32h8M15 15l5.6 5.6M43.4 43.4l5.6 5.6M49 15l-5.6 5.6M20.6 43.4L15 49" stroke="${color}" stroke-width="3" stroke-linecap="round"/></svg>`}
+function riskSignalsSvg(color){return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><path d="M32 6L4 56h56L32 6z" stroke="${color}" stroke-width="3.5" fill="none" stroke-linejoin="round"/><line x1="32" y1="24" x2="32" y2="40" stroke="${color}" stroke-width="3.5" stroke-linecap="round"/><circle cx="32" cy="48" r="2.5" fill="${color}"/></svg>`}
 
 /* ══════ UNIFIED GRAPH DATA ══════ */
 const UC = {...C,
-  flow_obo:{name:'On-Behalf-Of Flow',icon:'fluent:people-swap-24-regular',category:'Flow',color:'#0078D4',initial:'O',
+  flow_obo:{name:'Delegated Access Flow',icon:'fluent:people-swap-24-regular',category:'Flow',color:'#0078D4',initial:'D',
     definition:FLOWS.obo.summary,
     keyFacts:FLOWS.obo.steps.map((s,i)=>`Step ${i+1} - ${s.label}: ${s.detail}`),
-    relationships:[{target:'interactive',label:'Used by interactive agents'},{target:'blueprint',label:'Blueprint acquires FIC token'}]},
-  flow_auto:{name:'Autonomous App Flow',icon:'fluent:bot-sparkle-24-regular',category:'Flow',color:'#EC4899',initial:'A',
+    relationships:[{target:'interactive',label:'Used by agents with delegated access'},{target:'blueprint',label:'Blueprint acquires FIC token'}]},
+  flow_auto:{name:'Own Access Flow',icon:'fluent:bot-sparkle-24-regular',category:'Flow',color:'#EC4899',initial:'O',
     definition:FLOWS.autonomous.summary,
     keyFacts:FLOWS.autonomous.steps.map((s,i)=>`Step ${i+1} - ${s.label}: ${s.detail}`),
-    relationships:[{target:'autonomous',label:'Used by autonomous agents'},{target:'blueprint',label:'Blueprint acquires FIC token'}]},
+    relationships:[{target:'autonomous',label:'Used by agents with own access'},{target:'blueprint',label:'Blueprint acquires FIC token'}]},
   flow_ua:{name:'User Account Flow',icon:'fluent:bot-sparkle-24-regular',category:'Flow',color:'#7B5EA7',initial:'U',
     definition:FLOWS.useraccount.summary,
     keyFacts:FLOWS.useraccount.steps.map((s,i)=>`Step ${i+1} - ${s.label}: ${s.detail}`),
     relationships:[{target:'useraccount',label:'Used with agent user accounts'},{target:'blueprint',label:'Blueprint acquires FIC token'}]},
-  gov_ca:{name:'Conditional Access',icon:GOV.ca.icon,category:'Governance',color:GOV.ca.accent,initial:'C',
-    definition:GOV.ca.summary,keyFacts:GOV.ca.points,relationships:[{target:'identity',label:'Evaluates agent token requests'}],
+  auth_rbac:{name:'RBAC',icon:'fluent:people-settings-24-regular',category:'Authorization',color:'#FF8C00',initial:'R',
+    definition:'Role-Based Access Control assigns directory and custom roles to agent identities, granting permissions to manage Entra ID resources and perform administrative actions within defined scopes.',
+    keyFacts:['Directory roles scope administrative permissions for agent identities','Custom roles can be created for fine-grained agent access control','Roles can be assigned directly or inherited through group membership','Applies to all agent access patterns: delegated access, own access, and user account'],
+    relationships:[{target:'gov_ca',label:'CA evaluates role-based access'},{target:'flow_obo',label:'Scopes delegated access permissions'},{target:'flow_auto',label:'Scopes own access permissions'},{target:'flow_ua',label:'Scopes user account permissions'}]},
+  auth_api:{name:'API Permissions',icon:'fluent:key-24-regular',category:'Authorization',color:'#00B7C3',initial:'A',
+    definition:'Delegated (API) permissions define what an agent can do on behalf of a signed-in user. The effective permissions are the intersection of what the app is granted and what the user is allowed to do.',
+    keyFacts:['Delegated permissions require user context and user consent','Effective access is the intersection of app permissions and user privileges','Used by agents with delegated access operating via the OBO flow','Used by agents with user accounts that need user-object-scoped access','Scopes are defined on the agent identity blueprint (app registration)'],
+    relationships:[{target:'gov_ca',label:'CA evaluates delegated access'},{target:'flow_obo',label:'Delegated access flow uses delegated permissions'},{target:'flow_ua',label:'User account flow uses delegated permissions'}]},
+  auth_app:{name:'App Permissions',icon:'fluent:shield-keyhole-24-regular',category:'Authorization',color:'#8661C5',initial:'P',
+    definition:'Application permissions grant an agent identity direct access to resources without user context. These are consented by an administrator and apply when the agent operates autonomously.',
+    keyFacts:['App-only permissions do not require user context','Granted by tenant administrators via admin consent','Used by agents with own access running background operations','Permissions are configured on the agent identity blueprint','Higher privilege level requires stronger governance controls'],
+    relationships:[{target:'gov_ca',label:'CA evaluates app-only access'},{target:'flow_auto',label:'Own access flow uses app permissions'}]},
+  risk_signals:{name:'Risk Signals',icon:'fluent:shield-task-24-regular',category:'Authorization',color:'#FF8C00',initial:'S',
+    definition:'Risk signals are conditions and threat intelligence evaluated during token issuance and enforcement. They feed into Conditional Access policies to make real-time grant or block decisions for agent identities.',
+    keyFacts:['Anomalous sign-in patterns — unusual login behavior detected for the agent identity (all flows)','Leaked credentials — agent credentials found exposed in public repositories or dark web (all flows)','Suspicious sign-ins — sign-ins from unfamiliar locations, impossible travel, or malware-linked IPs (all flows)','Named locations — IP ranges and geographic regions defined as trusted or blocked (all flows)','Compliant network — traffic routed through Global Secure Access verified as compliant (all flows)','Authentication context — step-up requirements for sensitive operations like role activation (all flows)','Insider risk level — risk score from Adaptive Protection based on user behavior; applies only in delegated access flows (OBO and User Account) where user context exists'],
+    relationships:[{target:'gov_ca',label:'Feeds signals into Conditional Access evaluation'},{target:'auth_rbac',label:'Evaluates risk before granting role-based access'},{target:'auth_api',label:'Evaluates risk before granting delegated permissions'},{target:'auth_app',label:'Evaluates risk before granting app-only permissions'}]},
+  gov_ca:{name:'Conditional Access',icon:GOV.ca.icon,category:'Security Controls',color:GOV.ca.accent,initial:'C',
+    definition:GOV.ca.summary,keyFacts:[...GOV.ca.points,
+      'Evaluation signals for agent identities: anomalous sign-in patterns, leaked credentials, suspicious sign-ins, named locations, compliant network, authentication context',
+      'Insider risk from Adaptive Protection applies as a CA condition in delegated access flows (OBO and User Account) where user context exists; does not apply to agents with own access',
+    ],relationships:[{target:'identity',label:'Evaluates agent token requests'},{target:'risk_signals',label:'Evaluates risk signals for grant/block decisions'}],
     licensing:{title:'Conditional Access',plans:[
       {name:'Microsoft Entra ID P1',includes:['Conditional Access policies','MFA enforcement','Location-based access','Device-based conditions','Session controls','Authentication context','Token protection'],note:'Included with M365 E3/A3/F1/F3, Business Premium, EMS E3 (and all higher tiers)'},
       {name:'Microsoft Entra ID P2',includes:['All P1 features','Risk-based Conditional Access (sign-in risk & user risk - requires ID Protection)'],note:'Included with M365 E5/A5, EMS E5, Microsoft Defender Suite (and all higher tiers incl. Entra Suite & M365 E7)'}
     ]}},
-  gov_protection:{name:'ID Protection',icon:GOV.protection.icon,category:'Governance',color:GOV.protection.accent,initial:'P',
+  gov_protection:{name:'ID Protection',icon:GOV.protection.icon,category:'Security Controls',color:GOV.protection.accent,initial:'P',
     definition:GOV.protection.summary,keyFacts:GOV.protection.points,relationships:[{target:'identity',label:'Detects risky agent behavior'}],
     licensing:{title:'ID Protection',plans:[
       {name:'Microsoft Entra ID Free / P1',includes:['Limited risky users report (medium & high risk only)','Limited risky sign-ins report (no risk detail)','Limited risk detections (P1 only, no details)'],note:'Basic visibility included at Free and P1 tiers'},
       {name:'Microsoft Entra ID P2',includes:['Risk-based sign-in & user policies','Full risky users, sign-ins & detections reports','Users at risk alerts & weekly digest','MFA registration policy','Microsoft Graph risk APIs'],note:'Included with M365 E5/A5, EMS E5, Microsoft Defender Suite (and all higher tiers incl. Entra Suite & M365 E7)'},
       {name:'ID Protection for Agents',includes:['Risky Agents report & dashboard','Agent risk detections (unfamiliar resource, sign-in spike, failed access, risky user sign-in)','Confirm compromise / dismiss / disable actions','Risk-based CA for agents','Microsoft Graph riskyAgents & agentRiskDetections APIs'],note:'Included with Entra ID P2 license (during preview)'}
     ]}},
-  gov_governance:{name:'ID Governance',icon:GOV.governance.icon,category:'Governance',color:GOV.governance.accent,initial:'G',
+  gov_governance:{name:'ID Governance',icon:GOV.governance.icon,category:'Security Controls',color:GOV.governance.accent,initial:'G',
     definition:GOV.governance.summary,keyFacts:GOV.governance.points,relationships:[{target:'blueprint',label:'Manages agent lifecycle'}],
     licensing:{title:'ID Governance',plans:[
       {name:'Microsoft Entra ID P2',includes:['Entitlement management (core)','Access reviews (core)','Privileged Identity Management','PIM for Groups'],note:'Included with M365 E5/A5, EMS E5 (and all higher tiers)'},
       {name:'Microsoft Entra ID Governance (add-on)',includes:['All P2 features','Lifecycle Workflows','Advanced access reviews (ML-assisted)','Advanced entitlement management (auto-assignment, custom extensions)'],note:'Requires P1 or P2 prerequisite',bundle:'Also included in Microsoft Entra Suite and M365 E7'}
     ]}},
-  gov_packages:{name:'Access Packages',icon:GOV.packages.icon,category:'Governance',color:GOV.packages.accent,initial:'K',
+  gov_packages:{name:'Access Packages',icon:GOV.packages.icon,category:'Security Controls',color:GOV.packages.accent,initial:'K',
     definition:GOV.packages.summary,keyFacts:GOV.packages.points,relationships:[{target:'identity',label:'Manages agent access'}],
     licensing:{title:'Access Packages',plans:[
       {name:'Microsoft Entra ID P2',includes:['Entitlement management (core capabilities)','Access package assignments','Self-service access requests','Multi-stage approvals'],note:'Included with M365 E5/A5, EMS E5 (and all higher tiers)'},
       {name:'Microsoft Entra ID Governance (add-on)',includes:['All P2 features','Auto-assignment policies','Custom Extensions (Logic Apps)','Verified ID integration','Eligible group memberships (PIM for Groups)'],note:'Requires P1 or P2 prerequisite',bundle:'Also included in Microsoft Entra Suite and M365 E7'},
       {name:'Agent ID Access Packages',includes:['Access packages for agent identities','Access packages for agent user accounts','Agent self-request via Graph API','Sponsor-initiated requests','Time-bound agent access with expiration'],note:'Requires M365 Copilot license + Frontier program enabled'}
     ]}},
-  gov_network:{name:'Network Controls',icon:GOV.network.icon,category:'Governance',color:GOV.network.accent,initial:'N',
+  gov_network:{name:'Network Controls',icon:GOV.network.icon,category:'Security Controls',color:GOV.network.accent,initial:'N',
     definition:GOV.network.summary,keyFacts:GOV.network.points,relationships:[{target:'identity',label:'Secures agent network traffic'}],
     licensing:{title:'Global Secure Access',plans:[
       {name:'Network Security for Agents',includes:['Agent traffic forwarding to Global Secure Access','Web content filtering for agent traffic','Threat intelligence filtering','Network file filtering','HTTP Node, custom connectors & MCP Server traffic'],note:'Currently via Copilot Studio agents. Requires M365 Copilot + Frontier program enabled'}
     ]}},
-  gov_logs:{name:'Sign-in & Audit',icon:GOV.logs.icon,category:'Governance',color:GOV.logs.accent,initial:'L',
+  gov_logs:{name:'Sign-in & Audit',icon:GOV.logs.icon,category:'Security Controls',color:GOV.logs.accent,initial:'L',
     definition:GOV.logs.summary,keyFacts:GOV.logs.points,relationships:[{target:'tenant',label:'Audits tenant-wide activity'}],
     licensing:{title:'Monitoring & Health',plans:[
       {name:'Microsoft Entra ID Free',includes:['Audit logs','Sign-in logs','Custom security attributes'],note:'Included with any Microsoft cloud subscription'},
       {name:'Microsoft Entra ID P1 / P2',includes:['All Free features','Provisioning logs','Health','Microsoft Graph activity logs','Usage and insights'],note:'P1 with M365 E3/F1/F3, Business Premium, EMS E3; P2 with M365 E5, EMS E5 (and all higher tiers)'},
       {name:'Agent Sign-in & Audit Logs',includes:['agentSignIn resource type in sign-in logs','Agent type filter (Agent Identity, Agent ID user, Agent Identity Blueprint)','Agent audit events (create, delete, update)','Microsoft Graph /beta agent log queries'],note:'Included with Microsoft Entra ID, no additional license required'}
     ]}},
-  gov_consent:{name:'Consent & Sign-in',icon:GOV.consent.icon,category:'Governance',color:GOV.consent.accent,initial:'S',
+  gov_consent:{name:'Consent & Sign-in',icon:GOV.consent.icon,category:'Security Controls',color:GOV.consent.accent,initial:'S',
     definition:GOV.consent.summary,keyFacts:GOV.consent.points,relationships:[{target:'blueprint',label:'Controls agent onboarding'}],
     licensing:{title:'Consent & Sign-in Settings',plans:[
       {name:'Microsoft Entra ID Free',includes:['User consent settings','Admin consent workflow & reviews','Enterprise app consent policies'],note:'Included with any Microsoft cloud subscription'},
@@ -688,7 +717,7 @@ const UC = {...C,
   res_graph:{name:'Microsoft Graph',icon:'fluent:code-24-regular',category:'Resource',color:'#0078D4',initial:'G',
     definition:'The primary API surface for accessing Microsoft 365 services. Agents use Graph to interact with organizational data, users, mail, calendars, and files.',
     keyFacts:['Unified REST API endpoint for Microsoft 365','Supports delegated and app-only permissions','Central hub for agent resource access'],
-    relationships:[{target:'flow_obo',label:'Accessed via OBO flow'},{target:'flow_auto',label:'Accessed via autonomous flow'}]},
+    relationships:[{target:'flow_obo',label:'Accessed via delegated access flow'},{target:'flow_auto',label:'Accessed via own access flow'}]},
   res_teams:{name:'Microsoft Teams',icon:'fluent:people-team-24-regular',category:'Resource',color:'#6264A7',initial:'T',
     definition:'Collaboration platform. Agents interact with Teams through user-context flows for chat, channels, and meetings.',
     keyFacts:['Requires user object context','Chat, channels, and meeting capabilities'],
@@ -700,7 +729,7 @@ const UC = {...C,
   res_sharepoint:{name:'SharePoint',icon:'fluent:document-24-regular',category:'Resource',color:'#038387',initial:'S',
     definition:'Document management and collaboration platform. Agents access sites, lists, and files.',
     keyFacts:['Supports both delegated and app-only access','File and content management'],
-    relationships:[{target:'flow_obo',label:'Accessed via OBO flow'},{target:'flow_ua',label:'Accessed via user account flow'}]},
+    relationships:[{target:'flow_obo',label:'Accessed via delegated access flow'},{target:'flow_ua',label:'Accessed via user account flow'}]},
   res_calendar:{name:'Calendar',icon:'fluent:calendar-24-regular',category:'Resource',color:'#0078D4',initial:'C',
     definition:'Calendar services through Exchange Online. Agents manage events and scheduling with user context.',
     keyFacts:['Exchange Online integration','Scheduling and event management'],
@@ -708,36 +737,39 @@ const UC = {...C,
   res_apps:{name:'Apps',icon:'fluent:apps-24-regular',category:'Resource',color:'#50E6FF',initial:'A',
     definition:'Line-of-business applications and third-party services that agents access with proper permissions.',
     keyFacts:['Custom line-of-business APIs','Third-party service integrations'],
-    relationships:[{target:'flow_obo',label:'Accessed via OBO flow'}]},
+    relationships:[{target:'flow_obo',label:'Accessed via delegated access flow'}]},
   res_apis:{name:'Custom APIs',icon:'fluent:globe-24-regular',category:'Resource',color:'#50E6FF',initial:'P',
     definition:'Organization-specific APIs protected by OAuth 2.0 that agents can access.',
     keyFacts:['Custom APIs and integrations','Protected by OAuth 2.0'],
-    relationships:[{target:'flow_obo',label:'Accessed via OBO flow'},{target:'flow_auto',label:'Accessed via autonomous flow'}]},
+    relationships:[{target:'flow_obo',label:'Accessed via delegated access flow'},{target:'flow_auto',label:'Accessed via own access flow'}]},
   res_cloud:{name:'Cloud Services',icon:'fluent:cloud-24-regular',category:'Resource',color:'#0078D4',initial:'C',
-    definition:'Azure and cloud infrastructure resources accessed autonomously with app-only permissions.',
+    definition:'Azure and cloud infrastructure resources accessed by agents with own access using app-only permissions.',
     keyFacts:['Cloud infrastructure resources','App-only permission access'],
-    relationships:[{target:'flow_auto',label:'Accessed via autonomous flow'}]},
+    relationships:[{target:'flow_auto',label:'Accessed via own access flow'}]},
   res_data:{name:'Data Stores',icon:'fluent:database-24-regular',category:'Resource',color:'#F59E0B',initial:'D',
-    definition:'Backend databases and storage services that autonomous agents access with app-only permissions.',
+    definition:'Backend databases and storage services that agents with own access connect to using app-only permissions.',
     keyFacts:['Databases and storage services','App-only permission access'],
-    relationships:[{target:'flow_auto',label:'Accessed via autonomous flow'}]},
+    relationships:[{target:'flow_auto',label:'Accessed via own access flow'}]},
   res_security:{name:'Security',icon:'fluent:shield-24-regular',category:'Resource',color:'#E3008C',initial:'S',
-    definition:'Security services and APIs accessed by autonomous agents for monitoring and response.',
+    definition:'Security services and APIs accessed by agents with own access for monitoring and response.',
     keyFacts:['Security monitoring and response','Threat intelligence APIs'],
-    relationships:[{target:'flow_auto',label:'Accessed via autonomous flow'}]},
+    relationships:[{target:'flow_auto',label:'Accessed via own access flow'}]},
 };
 const UNIFIED_NODES = [
-  /* ── Identity Model (right area) ── */
-  {id:'tenant',x:0.57,y:0.07,s:1.0},
-  {id:'blueprint',x:0.57,y:0.18,s:1.0},{id:'principal',x:0.40,y:0.30,s:1.0},
-  {id:'identity',x:0.74,y:0.30,s:1.0},
-  {id:'interactive',x:0.36,y:0.42,s:1.0},{id:'useraccount',x:0.57,y:0.42,s:1.0},{id:'autonomous',x:0.78,y:0.42,s:1.0},
+  /* ── Identity Model ── */
+  {id:'tenant',x:0.57,y:0.06,s:1.0},
+  {id:'blueprint',x:0.57,y:0.17,s:1.0},{id:'principal',x:0.40,y:0.23,s:1.0},
+  {id:'identity',x:0.74,y:0.23,s:1.0},
+  {id:'interactive',x:0.36,y:0.34,s:1.0},{id:'useraccount',x:0.57,y:0.34,s:1.0},{id:'autonomous',x:0.78,y:0.34,s:1.0},
   /* ── Authentication Flows ── */
-  {id:'flow_obo',x:0.36,y:0.61,s:1.0},{id:'flow_ua',x:0.57,y:0.61,s:1.0},{id:'flow_auto',x:0.78,y:0.61,s:1.0},
+  {id:'flow_obo',x:0.36,y:0.49,s:1.0},{id:'flow_ua',x:0.57,y:0.49,s:1.0},{id:'flow_auto',x:0.78,y:0.49,s:1.0},
+  /* ── Authorization ── */
+  {id:'risk_signals',x:0.57,y:0.65,s:1.0,shape:'square'},
+  {id:'auth_rbac',x:0.47,y:0.73,s:1.0,shape:'square'},{id:'auth_api',x:0.57,y:0.73,s:1.0,shape:'square'},{id:'auth_app',x:0.67,y:0.73,s:1.0,shape:'square'},
   /* ── Resources & Services (clustered below each flow) ── */
-  {id:'res_apis',x:0.29,y:0.80,s:1.0},{id:'res_apps',x:0.33,y:0.85,s:1.0},{id:'res_graph',x:0.37,y:0.80,s:1.0},
-  {id:'res_teams',x:0.51,y:0.80,s:1.0},{id:'res_outlook',x:0.57,y:0.78,s:1.0},{id:'res_calendar',x:0.63,y:0.80,s:1.0},{id:'res_sharepoint',x:0.57,y:0.85,s:1.0},
-  {id:'res_security',x:0.74,y:0.80,s:1.0},{id:'res_data',x:0.78,y:0.85,s:1.0},{id:'res_cloud',x:0.82,y:0.80,s:1.0},
+  {id:'res_apis',x:0.23,y:0.89,s:1.0},{id:'res_apps',x:0.29,y:0.91,s:1.0},{id:'res_graph',x:0.35,y:0.89,s:1.0},
+  {id:'res_teams',x:0.51,y:0.86,s:1.0},{id:'res_outlook',x:0.57,y:0.84,s:1.0},{id:'res_calendar',x:0.63,y:0.86,s:1.0},{id:'res_sharepoint',x:0.57,y:0.91,s:1.0},
+  {id:'res_security',x:0.79,y:0.89,s:1.0},{id:'res_data',x:0.85,y:0.91,s:1.0},{id:'res_cloud',x:0.91,y:0.89,s:1.0},
   /* ── Governance & Security (vertical left panel) ── */
   {id:'gov_ca',x:0.075,y:0.12,s:1.0,shape:'square'},
   {id:'gov_protection',x:0.075,y:0.24,s:1.0,shape:'square'},
@@ -748,25 +780,37 @@ const UNIFIED_NODES = [
   {id:'gov_consent',x:0.075,y:0.84,s:1.0,shape:'square'},
 ];
 const UNIFIED_EDGES = [
-  {source:'tenant',target:'blueprint',label:'Contains',lt:0.45,lo:14},
+  {source:'tenant',target:'blueprint',label:'Contains',lt:0.55,lo:28},
   {source:'blueprint',target:'principal',label:'Instantiates',lt:0.5,lo:14},
-  {source:'blueprint',target:'identity',label:'Creates (1:many)',lt:0.5,lo:-14},
+  {source:'blueprint',target:'identity',label:'Creates (1:many)',lt:0.4,lo:-20},
   {source:'identity',target:'interactive',label:'Operates as',lt:0.3,lo:18},
   {source:'identity',target:'useraccount',label:'Operates as',lt:0.5,lo:-18},
-  {source:'identity',target:'autonomous',label:'Operates as',lt:0.55,lo:-18},
-  {source:'interactive',target:'flow_obo',label:'Authenticates via',lt:0.5,lo:14},
-  {source:'useraccount',target:'flow_ua',label:'Authenticates via',lt:0.5,lo:14},
-  {source:'autonomous',target:'flow_auto',label:'Authenticates via',lt:0.5,lo:-14},
-  {source:'flow_obo',target:'res_graph',label:'',lt:0.5,lo:6},
-  {source:'flow_obo',target:'res_apps',label:'',lt:0.5,lo:0},
-  {source:'flow_obo',target:'res_apis',label:'',lt:0.5,lo:-6},
-  {source:'flow_ua',target:'res_teams',label:'',lt:0.5,lo:6},
-  {source:'flow_ua',target:'res_outlook',label:'',lt:0.5,lo:0},
-  {source:'flow_ua',target:'res_calendar',label:'',lt:0.5,lo:-6},
-  {source:'flow_ua',target:'res_sharepoint',label:'',lt:0.4,lo:-8},
-  {source:'flow_auto',target:'res_cloud',label:'',lt:0.5,lo:6},
-  {source:'flow_auto',target:'res_data',label:'',lt:0.5,lo:0},
-  {source:'flow_auto',target:'res_security',label:'',lt:0.5,lo:-6},
+  {source:'identity',target:'autonomous',label:'Operates as',lt:0.65,lo:-36},
+  {source:'interactive',target:'flow_obo',label:'Authenticates via',lt:0.72,lo:14},
+  {source:'useraccount',target:'flow_ua',label:'Authenticates via',lt:0.72,lo:14},
+  {source:'autonomous',target:'flow_auto',label:'Authenticates via',lt:0.72,lo:-14},
+  /* ── Flows → Risk Signals ── */
+  {source:'flow_obo',target:'risk_signals',label:'Delegated',lt:0.35,lo:14},
+  {source:'flow_ua',target:'risk_signals',label:'Delegated',lt:0.5,lo:-14},
+  {source:'flow_auto',target:'risk_signals',label:'App-only',lt:0.5,lo:-14},
+  /* ── Risk Signals → Permissions ── */
+  {source:'risk_signals',target:'auth_rbac',label:'',lt:0.5,lo:8},
+  {source:'risk_signals',target:'auth_api',label:'',lt:0.5,lo:0},
+  {source:'risk_signals',target:'auth_app',label:'',lt:0.5,lo:-8},
+  /* ── Authorization → Resources ── */
+  {source:'auth_rbac',target:'res_graph',label:'',lt:0.5,lo:6},
+  {source:'auth_rbac',target:'res_apps',label:'',lt:0.5,lo:0},
+  {source:'auth_rbac',target:'res_apis',label:'',lt:0.5,lo:-6},
+  {source:'auth_api',target:'res_teams',label:'',lt:0.5,lo:6},
+  {source:'auth_api',target:'res_outlook',label:'',lt:0.5,lo:0},
+  {source:'auth_api',target:'res_calendar',label:'',lt:0.5,lo:-6},
+  {source:'auth_api',target:'res_sharepoint',label:'',lt:0.4,lo:-8},
+  {source:'auth_app',target:'res_cloud',label:'',lt:0.5,lo:-6,cv:-22},
+  {source:'auth_app',target:'res_data',label:'',lt:0.5,lo:0,cv:-22},
+  {source:'auth_app',target:'res_security',label:'',lt:0.5,lo:6,cv:-22},
+  /* ── Risk Signals → Conditional Access ── */
+  {source:'risk_signals',target:'gov_ca',label:'Evaluated by',lt:0.3,lo:0},
+  /* ── Identity → Governance ── */
   {source:'identity',target:'gov_ca',label:'',lt:0.3,lo:6},
   {source:'identity',target:'gov_protection',label:'',lt:0.3,lo:0},
   {source:'identity',target:'gov_packages',label:'',lt:0.3,lo:-6},
@@ -816,6 +860,8 @@ async function loadIcons() {
   const botSvg = (color) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect x="14" y="22" width="36" height="28" rx="6" stroke="${color}" stroke-width="4" fill="none"/><circle cx="25" cy="36" r="4" fill="${color}"/><circle cx="39" cy="36" r="4" fill="${color}"/><line x1="32" y1="14" x2="32" y2="22" stroke="${color}" stroke-width="4" stroke-linecap="round"/><circle cx="32" cy="11" r="3" fill="${color}"/><path d="M26 46 L32 50 L38 46" stroke="${color}" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
   const inline = { identity: agentSvg('#0078D4'), interactive: agentSvg('#7B5EA7'), autonomous: agentSvg('#E3008C'), useraccount: botSvg('#7B5EA7'),
     flow_obo: flowSvg('#0078D4'), flow_auto: flowSvg('#EC4899'), flow_ua: flowSvg('#7B5EA7'),
+    auth_rbac: rbacSvg('#FF8C00'), auth_api: apiPermSvg('#00B7C3'), auth_app: appPermSvg('#8661C5'),
+    risk_signals: riskSignalsSvg('#FF8C00'),
     ...resIcons };
   const resRemote = {
     teams: m365Teams + 'Building%20People_Teams_Dark.svg',
@@ -916,16 +962,18 @@ const THEME = {
 
 const LAYERS_DARK = [
   {x0:0.005,x1:0.15,y0:0.01,y1:0.96,label:'GOVERNANCE &\nSECURITY',vertical:true,from:'rgba(227,0,140,0.05)',to:'rgba(227,0,140,0.02)',border:'rgba(227,0,140,0.20)',labelColor:'rgba(227,100,180,0.70)'},
-  {x0:0.15,y0:0.01,y1:0.50,label:'AGENT IDENTITY MODEL',from:'rgba(0,120,212,0.06)',to:'rgba(0,120,212,0.02)',border:'rgba(0,120,212,0.22)',labelColor:'rgba(120,180,255,0.70)'},
-  {x0:0.15,y0:0.50,y1:0.72,label:'AGENT AUTHENTICATION FLOWS',from:'rgba(80,230,255,0.06)',to:'rgba(80,230,255,0.02)',border:'rgba(80,230,255,0.22)',labelColor:'rgba(80,230,255,0.70)'},
-  {x0:0.15,y0:0.72,y1:0.96,label:'RESOURCES AGENTS MAY CONSUME',from:'rgba(0,120,212,0.06)',to:'rgba(0,120,212,0.02)',border:'rgba(0,120,212,0.22)',labelColor:'rgba(120,180,255,0.70)'},
+  {x0:0.15,y0:0.01,y1:0.43,label:'AGENT IDENTITY MODEL',from:'rgba(0,120,212,0.06)',to:'rgba(0,120,212,0.02)',border:'rgba(0,120,212,0.22)',labelColor:'rgba(120,180,255,0.70)'},
+  {x0:0.15,y0:0.43,y1:0.59,label:'AGENT AUTHENTICATION FLOWS',from:'rgba(80,230,255,0.06)',to:'rgba(80,230,255,0.02)',border:'rgba(80,230,255,0.22)',labelColor:'rgba(80,230,255,0.70)'},
+  {x0:0.15,y0:0.59,y1:0.80,label:'AUTHORIZATION',from:'rgba(255,140,0,0.06)',to:'rgba(255,140,0,0.02)',border:'rgba(255,140,0,0.22)',labelColor:'rgba(255,180,80,0.70)'},
+  {x0:0.15,y0:0.80,y1:0.96,label:'RESOURCES AGENTS MAY CONSUME',from:'rgba(0,120,212,0.06)',to:'rgba(0,120,212,0.02)',border:'rgba(0,120,212,0.22)',labelColor:'rgba(120,180,255,0.70)'},
 ];
 
 const LAYERS_LIGHT = [
   {x0:0.005,x1:0.15,y0:0.01,y1:0.96,label:'GOVERNANCE &\nSECURITY',vertical:true,from:'rgba(227,0,140,0.04)',to:'rgba(227,0,140,0.01)',border:'rgba(227,0,140,0.12)',labelColor:'rgba(180,0,110,0.60)'},
-  {x0:0.15,y0:0.01,y1:0.50,label:'AGENT IDENTITY MODEL',from:'rgba(0,120,212,0.06)',to:'rgba(0,120,212,0.02)',border:'rgba(0,120,212,0.18)',labelColor:'rgba(0,80,160,0.65)'},
-  {x0:0.15,y0:0.50,y1:0.72,label:'AGENT AUTHENTICATION FLOWS',from:'rgba(0,120,212,0.06)',to:'rgba(0,120,212,0.02)',border:'rgba(0,120,212,0.18)',labelColor:'rgba(0,80,160,0.65)'},
-  {x0:0.15,y0:0.72,y1:0.96,label:'RESOURCES AGENTS MAY CONSUME',from:'rgba(0,120,212,0.04)',to:'rgba(0,120,212,0.01)',border:'rgba(0,120,212,0.15)',labelColor:'rgba(0,80,160,0.60)'},
+  {x0:0.15,y0:0.01,y1:0.43,label:'AGENT IDENTITY MODEL',from:'rgba(0,120,212,0.06)',to:'rgba(0,120,212,0.02)',border:'rgba(0,120,212,0.18)',labelColor:'rgba(0,80,160,0.65)'},
+  {x0:0.15,y0:0.43,y1:0.59,label:'AGENT AUTHENTICATION FLOWS',from:'rgba(0,120,212,0.06)',to:'rgba(0,120,212,0.02)',border:'rgba(0,120,212,0.18)',labelColor:'rgba(0,80,160,0.65)'},
+  {x0:0.15,y0:0.59,y1:0.80,label:'AUTHORIZATION',from:'rgba(255,140,0,0.05)',to:'rgba(255,140,0,0.01)',border:'rgba(255,140,0,0.18)',labelColor:'rgba(180,100,0,0.65)'},
+  {x0:0.15,y0:0.80,y1:0.96,label:'RESOURCES AGENTS MAY CONSUME',from:'rgba(0,120,212,0.04)',to:'rgba(0,120,212,0.01)',border:'rgba(0,120,212,0.15)',labelColor:'rgba(0,80,160,0.60)'},
 ];
 
 function getTheme() {
@@ -955,34 +1003,28 @@ function ConceptGraph({ selected, onSelect, dedicated, unified }) {
       epRef.current=ED.map(e=>({...e,ps:Array.from({length:3},(_,i)=>({t:i/3,sp:0.0007+Math.random()*0.0005}))}));
     }
     function getN(mx,my){for(const n of nodesRef.current){if(n.shape==='square'){const s=n.r+6;if(Math.abs(mx-n.dx)<s&&Math.abs(my-n.dy)<s)return n}else{const dx=mx-n.dx,dy=my-n.dy;if(dx*dx+dy*dy<(n.r+10)*(n.r+10))return n}}return null}
-    /* 2-hop highlight (3-hop for flow nodes): selected → neighbors → gov/res */
+    /* full downstream cascade + direct upstream parents */
     function hiSet(sel){
       if(!sel)return{nodes:new Set(),edges:new Set()};
       const ns=new Set([sel]),es=new Set();
-      const isLeaf=id=>id.startsWith('gov_')||id.startsWith('res_');
-      // 1st hop: direct connections
-      ED.forEach((e,i)=>{if(e.source===sel||e.target===sel){es.add(i);ns.add(e.source);ns.add(e.target)}});
-      // 2nd hop: from non-leaf neighbors, follow their gov/res edges
-      const hop1=[...ns].filter(id=>id!==sel&&!isLeaf(id));
-      hop1.forEach(nid=>{ED.forEach((e,i)=>{
-        if(es.has(i))return;
-        const other=e.source===nid?e.target:e.target===nid?e.source:null;
-        if(other&&isLeaf(other)){es.add(i);ns.add(other)}
-      })});
-      // 3rd hop for flow nodes: pattern → identity → gov/res
-      if(sel.startsWith('flow_')){
-        const newCore=new Set();
-        hop1.forEach(nid=>{ED.forEach((e,i)=>{
+      // upstream: add direct parents (edges where sel is target)
+      ED.forEach((e,i)=>{if(e.target===sel){es.add(i);ns.add(e.source)}});
+      // downstream BFS: follow source→target from selected node only
+      let frontier=[sel];
+      while(frontier.length){
+        const next=[];
+        frontier.forEach(nid=>{ED.forEach((e,i)=>{
           if(es.has(i))return;
-          const other=e.source===nid?e.target:e.target===nid?e.source:null;
-          if(other&&!ns.has(other)&&!isLeaf(other)){es.add(i);ns.add(other);newCore.add(other)}
+          if(e.source===nid&&!ns.has(e.target)){es.add(i);ns.add(e.target);next.push(e.target)}
         })});
-        newCore.forEach(nid=>{ED.forEach((e,i)=>{
-          if(es.has(i))return;
-          const other=e.source===nid?e.target:e.target===nid?e.source:null;
-          if(other&&isLeaf(other)&&!ns.has(other)){es.add(i);ns.add(other)}
-        })});
+        frontier=next;
       }
+      // also include governance edges from any highlighted node
+      ED.forEach((e,i)=>{
+        if(es.has(i))return;
+        if(ns.has(e.source)&&e.target.startsWith('gov_')){es.add(i);ns.add(e.target)}
+        if(ns.has(e.target)&&e.source.startsWith('gov_')){es.add(i);ns.add(e.source)}
+      });
       return{nodes:ns,edges:es};
     }
     function drawE(e,ei,hs,t){
@@ -990,7 +1032,7 @@ function ConceptGraph({ selected, onSelect, dedicated, unified }) {
       const sel=selRef.current,hi=sel&&hs.edges.has(ei),dim=sel&&!hi;
       const isGov=e.source.startsWith('gov_')||e.target.startsWith('gov_');
       const isRes=e.source.startsWith('res_')||e.target.startsWith('res_');
-      const s={x:sn.dx,y:sn.dy},tt={x:tn.dx,y:tn.dy},cp=ctrlPt(s,tt,22);const T=tp();
+      const s={x:sn.dx,y:sn.dy},tt={x:tn.dx,y:tn.dy},cp=ctrlPt(s,tt,e.cv||22);const T=tp();
       ctx.beginPath();ctx.moveTo(s.x,s.y);ctx.quadraticCurveTo(cp.x,cp.y,tt.x,tt.y);
       if(isGov||isRes){ctx.save();ctx.setLineDash(hi?[6,4]:[4,6]);ctx.strokeStyle=dim?T.edgeDashDim:hi?(isRes?T.resEdgeHi:'rgba(255,140,0,0.6)'):(isRes?T.edgeDash:T.edgeDashGov);ctx.lineWidth=hi?1.4:1.2;ctx.stroke();ctx.restore()}
       else{ctx.strokeStyle=dim?T.edgeStrokeDim:hi?T.edgeStrokeHi:T.edgeStroke;ctx.lineWidth=hi?2.5:1.5;ctx.stroke()}
@@ -1079,6 +1121,68 @@ function ConceptGraph({ selected, onSelect, dedicated, unified }) {
         }
       }
     }
+    function drawAuthOverlay(hs){
+      if(!unified)return;
+      const rs=nodesRef.current.find(n=>n.id==='risk_signals');
+      const rbac=nodesRef.current.find(n=>n.id==='auth_rbac');
+      const api=nodesRef.current.find(n=>n.id==='auth_api');
+      const app=nodesRef.current.find(n=>n.id==='auth_app');
+      if(!rs||!rbac||!api||!app)return;
+      const sel=selRef.current;
+      const anyHi=sel&&(hs.nodes.has('risk_signals')||hs.nodes.has('auth_rbac')||hs.nodes.has('auth_api')||hs.nodes.has('auth_app'));
+      const dim=sel&&!anyHi;
+      const dk=getTheme()==='dark';
+      /* ── sub-group rect around permission nodes ── */
+      const pad=18;
+      const gx=rbac.dx-rbac.r-pad, gy=rbac.dy-rbac.r-pad;
+      const gw=app.dx+app.r+pad-gx, gh=rbac.r*2+pad*2;
+      ctx.save();ctx.globalAlpha=dim?0.08:0.35;ctx.strokeStyle=dk?'rgba(255,140,0,0.45)':'rgba(180,100,0,0.35)';
+      ctx.setLineDash([4,4]);ctx.lineWidth=1;rrect(ctx,gx,gy,gw,gh,6);ctx.stroke();ctx.restore();
+      /* ── signal ellipse (full ring around Risk Signals) ── */
+      const leftSignals=['Anomalous sign-in','Leaked credentials','Suspicious sign-ins','Named locations'];
+      const rightSignals=['Compliant network','Auth context','IRM / Adaptive Protection (delegated only)'];
+      const fs=dedicated?9:7;
+      const pillH=fs+5, pillR=pillH/2;
+      const fillAlpha=dim?0.04:0.12, textAlpha=dim?0.15:0.75;
+      const pillFill=dk?`rgba(255,140,0,${fillAlpha})`:`rgba(255,180,80,${fillAlpha*1.5})`;
+      const pillStroke=dk?`rgba(255,140,0,${dim?0.06:0.25})`:`rgba(180,100,0,${dim?0.08:0.22})`;
+      const pillText=dk?`rgba(255,200,120,${textAlpha})`:`rgba(120,60,0,${textAlpha})`;
+      const lineCol=dk?`rgba(255,140,0,${dim?0.08:0.45})`:`rgba(180,100,0,${dim?0.1:0.4})`;
+      ctx.save();ctx.font=`500 ${fs}px Segoe UI, sans-serif`;
+      const eaH=W*0.14,ebV=H*0.045;
+      /* full ellipse */
+      ctx.strokeStyle=lineCol;ctx.lineWidth=1.5;ctx.setLineDash([4,3]);
+      ctx.beginPath();ctx.ellipse(rs.dx,rs.dy,eaH,ebV,0,0,Math.PI*2);ctx.stroke();
+      /* left pills (210° top to 150° bottom) */
+      const lAngles=leftSignals.map((_,i)=>{const s=210,e=150;return(s-i*(s-e)/(leftSignals.length-1))*Math.PI/180});
+      leftSignals.forEach((sig,i)=>{
+        const px=rs.dx+eaH*Math.cos(lAngles[i]),py=rs.dy+ebV*Math.sin(lAngles[i]);
+        const pw=ctx.measureText(sig).width+12;
+        ctx.setLineDash([]);ctx.fillStyle=pillFill;rrect(ctx,px-pw-4,py-pillH/2,pw,pillH,pillR);ctx.fill();
+        ctx.strokeStyle=pillStroke;ctx.lineWidth=0.8;ctx.stroke();
+        ctx.fillStyle=pillText;ctx.textAlign='right';ctx.textBaseline='middle';
+        ctx.fillText(sig,px-10,py);
+      });
+      /* right pills (-30° top to 30° bottom) */
+      const irmFill=dk?`rgba(200,50,180,${dim?0.06:0.18})`:`rgba(200,50,180,${(dim?0.04:0.12)*1.5})`;
+      const irmStroke=dk?`rgba(220,80,200,${dim?0.1:0.55})`:`rgba(160,40,140,${dim?0.1:0.4})`;
+      const irmText=dk?`rgba(255,160,240,${textAlpha})`:`rgba(140,20,120,${textAlpha})`;
+      const irmGlow=dk?'rgba(220,80,200,0.35)':'rgba(180,50,160,0.25)';
+      const rAngles=rightSignals.map((_,i)=>{const s=-30,e=30;return(s+i*(e-s)/(rightSignals.length-1))*Math.PI/180});
+      rightSignals.forEach((sig,i)=>{
+        const isIRM=sig.startsWith('IRM');
+        const px=rs.dx+eaH*Math.cos(rAngles[i]),py=rs.dy+ebV*Math.sin(rAngles[i]);
+        const pw=ctx.measureText(sig).width+12;
+        if(isIRM&&!dim){ctx.save();ctx.shadowColor=irmGlow;ctx.shadowBlur=10;ctx.fillStyle=irmFill;rrect(ctx,px+4,py-pillH/2,pw,pillH,pillR);ctx.fill();ctx.restore();}
+        else{ctx.setLineDash([]);ctx.fillStyle=pillFill;rrect(ctx,px+4,py-pillH/2,pw,pillH,pillR);ctx.fill();}
+        ctx.strokeStyle=isIRM?irmStroke:pillStroke;ctx.lineWidth=isIRM?1.2:0.8;ctx.setLineDash([]);rrect(ctx,px+4,py-pillH/2,pw,pillH,pillR);ctx.stroke();
+        ctx.fillStyle=isIRM?irmText:pillText;ctx.textAlign='left';ctx.textBaseline='middle';
+        ctx.font=isIRM?`700 ${fs}px Segoe UI, sans-serif`:`500 ${fs}px Segoe UI, sans-serif`;
+        ctx.fillText(sig,px+10,py);
+        if(isIRM)ctx.font=`500 ${fs}px Segoe UI, sans-serif`;
+      });
+      ctx.restore();
+    }
     function drawLegend(){
       const T=tp();const items=unified?[
         {label:'Identity relationship',color:T.edgeStroke,dash:false},
@@ -1104,7 +1208,7 @@ function ConceptGraph({ selected, onSelect, dedicated, unified }) {
       ctx.restore();
     }
     function anim(t){ctx.clearRect(0,0,W,H);drawLayers();const hs=hiSet(selRef.current);for(const n of nodesRef.current){n.dx=n.bx+Math.sin(t*0.0007+n.ph)*2;n.dy=n.by+Math.cos(t*0.0009+n.ph)*1.5}
-      epRef.current.forEach((e,i)=>drawE(e,i,hs,t));for(const n of nodesRef.current)drawN(n,hs,t);drawLegend();animRef.current=requestAnimationFrame(anim)}
+      epRef.current.forEach((e,i)=>drawE(e,i,hs,t));drawAuthOverlay(hs);for(const n of nodesRef.current)drawN(n,hs,t);drawLegend();animRef.current=requestAnimationFrame(anim)}
     function onClick(ev){const rect=cv.getBoundingClientRect();const nd=getN(ev.clientX-rect.left,ev.clientY-rect.top);onSelect(nd?nd.id:null)}
     function onMove(ev){const rect=cv.getBoundingClientRect();const nd=getN(ev.clientX-rect.left,ev.clientY-rect.top);hovRef.current=nd?nd.id:null;cv.style.cursor=nd?'pointer':'default'}
     resize();animRef.current=requestAnimationFrame(anim);cv.addEventListener('click',onClick);cv.addEventListener('mousemove',onMove);
@@ -1169,7 +1273,7 @@ function LicensePanel({sel,edges,concepts}){const D=concepts||C;
   if(govIds.size===0)return null;
   const items=[...govIds].map(id=>({id,...D[id]}));
   return html`<div className="license-panel">
-    <h3><iconify-icon icon="fluent:certificate-24-regular" width="18" style=${{color:'#FF8C00'}}></iconify-icon> Licensing <span className="lp-badge">Required</span></h3>
+    <h3><iconify-icon icon="fluent:certificate-24-regular" width="18" style=${{color:'#FF8C00'}}></iconify-icon> Licensing <span className="lp-badge">Recommended</span></h3>
     ${items.map((c,idx)=>html`<div key=${c.id}>
       ${idx>0&&html`<div className="lp-connector"></div>`}
       <div className="lp-tool-header">
@@ -1310,8 +1414,8 @@ function App(){const[sel,setSel]=useState(null);
   return html`
     <div className="article" style=${{paddingTop:32,paddingBottom:0}}>
       <div className="disclaimer"><p>The views and opinions expressed here are my own and do not represent Microsoft. This content is not official Microsoft documentation and is not supported by Microsoft.</p></div>
-      <p>As security professionals, we cannot afford to fall behind on how identity works in the agentic world. That is what led me to spend a rainy Sunday afternoon in western Connecticut pulling apart Microsoft Entra Agent ID, whiteboarding the pieces, and turning them into interactive visuals. As we say at Microsoft: <strong>adversaries think in graphs</strong>. That same principle drives attack paths in Defender XDR and investigation graphs across incidents. I tried to apply it here so we can see how the building blocks of Agent ID connect.</p>
-      <p>The article walks through three sections. <strong>Section 01, Key Concepts</strong>, maps the identity hierarchy (blueprints, principals, user bindings, operational patterns) as an interactive relationship graph. <strong>Section 02, Authentication Flows</strong>, presents step-by-step sequence diagrams for the three ways an agent can authenticate. <strong>Section 03, Governance and Security</strong>, covers the seven pillars we can use to lock all of this down. There is also a <strong>Unified Architecture view</strong> that combines every concept, flow, and governance control into a single interactive graph, useful when you want the full picture in one place.</p>
+      <p>AI agents are getting their own identities in Microsoft Entra, and with identity comes the full weight of authentication, authorization, and governance. I put this together to break down <strong>Microsoft Entra Agent ID</strong>, the identity layer, not the broader <strong>Microsoft Agent 365</strong> platform. Agent 365 is the full management umbrella (admin center, registry, observability, Purview compliance, Defender threat protection). Agent ID is one component within it: the part that lives in Entra and handles how agents prove who they are, what they can access, and what controls apply. The sections below turn those identity building blocks into interactive visuals. As we say at Microsoft: <strong>adversaries think in graphs</strong>. That same principle drives attack paths in Defender XDR and investigation graphs across incidents. I applied it here so we can see how the pieces of Agent ID connect, and more importantly, where the security controls sit.</p>
+      <p>The article walks through three sections. <strong>Section 01, Key Concepts of Agent ID</strong>, maps the identity hierarchy (blueprints, principals, user bindings, operational patterns) as an interactive relationship graph. <strong>Section 02, Agent Authentication Flows</strong>, presents step-by-step sequence diagrams for the three ways an agent can authenticate. <strong>Section 03, Govern and Secure</strong>, covers the seven pillars we can use to lock all of this down. There is also a <strong>Unified Architecture view</strong> that combines every concept, flow, and governance control into a single interactive graph, useful when you want the full picture in one place.</p>
       <p>You have two ways to use this. If you prefer to read some context first, keep scrolling. It is not long, just the core foundations condensed. If you are more of a visual person and want to jump straight to an interactive diagram, click any of the boxes below and it will open in a dedicated page.</p>
       <div className="section-nav-hero">
         <a className="section-nav-card" href="?view=unified" style=${{['--card-accent']:tp().selStroke}}>
@@ -1378,10 +1482,10 @@ function App(){const[sel,setSel]=useState(null);
         <p>On the other side, the blueprint creates one or more <strong>agent identities</strong>. Each agent identity represents an individual operating instance of an agent. It does not hold credentials of its own; it authenticates through tokens issued by its parent blueprint. Administrators manage credentials and policies at the blueprint level while scaling out many identities underneath. Every agent identity belongs to exactly one blueprint and is always single-tenant, regardless of whether its parent blueprint supports multi-tenancy.</p>
 
         <h3>How agents operate</h3>
-        <p>Depending on the scenario, an agent identity can operate in different ways.</p>
+        <p>Depending on the scenario, an agent identity can operate with different access models.</p>
         <ul>
-          <li><strong>Interactive agents</strong> sign in a user and act in response to user prompts, typically through a chat interface. They use delegated permissions scoped to what the user has consented to, and their tokens are commonly called user tokens.</li>
-          <li><strong>Autonomous agents</strong> perform actions under their own identity without user context. They run in the background, use app-only permissions granted by tenant administrators, and their tokens are called agent tokens.</li>
+          <li><strong>Agents with delegated access</strong> (formerly "OBO agents") sign in a user and act in response to user prompts, typically through a chat interface. They use delegated permissions scoped to what the user has consented to, and their tokens are commonly called user tokens.</li>
+          <li><strong>Agents with own access</strong> (formerly "non-OBO agents") perform actions under their own identity without user context. They run in the background, use app-only permissions granted by tenant administrators, and their tokens are called agent tokens.</li>
           <li><strong>Agent\u2019s user account</strong> pairs one-to-one with an agent identity and is used when the agent must access systems that require a user object, like an Exchange Online mailbox or a Teams channel. The user account does not replace the agent identity; both exist side by side, and the account can be impersonated by only the single agent identity it is paired with.</li>
         </ul>
       </div>
@@ -1392,7 +1496,7 @@ function App(){const[sel,setSel]=useState(null);
         <div className="section-head"><span className="section-num">02</span><h2>Agent ID Authentication Flows</h2></div>
         <p className="section-desc">How agents acquire tokens through multi-stage exchanges.</p>
         <p>Microsoft Entra Agent ID supports three authentication flow patterns. All three rely on multi-stage token exchanges where the agent identity blueprint impersonates the agent identity to perform operations. None use redirect URIs or the /authorize endpoint. All agent entities authenticate as confidential clients. Managed identities are the preferred credential type: the managed identity token serves as the credential for the parent agent identity blueprint, while standard MSI protocols apply for credential acquisition.</p>
-        <p>The <strong>Agent On-Behalf-Of</strong> flow enables user delegation: the agent identity operates on behalf of a signed-in user using standard OAuth 2.0 On-Behalf-Of flows with agent-specific impersonation. The <strong>Autonomous App</strong> flow enables app-only operations without user context, where the agent identity blueprint impersonates the agent identity to obtain a token for itself. The <strong>Agent\u2019s User Account</strong> flow uses credential chaining (blueprint \u2192 identity \u2192 user account) for agents that need to operate with a user object such as an Exchange Online mailbox.</p>
+        <p>The <strong>Delegated Access (OBO)</strong> flow enables user delegation: the agent identity operates on behalf of a signed-in user using standard OAuth 2.0 On-Behalf-Of flows with agent-specific impersonation. The <strong>Own Access (Autonomous)</strong> flow enables app-only operations without user context, where the agent identity blueprint impersonates the agent identity to obtain a token for itself. The <strong>Agent\u2019s User Account</strong> flow uses credential chaining (blueprint \u2192 identity \u2192 user account) for agents that need to operate with a user object such as an Exchange Online mailbox.</p>
         <p>Select a flow below to explore the step-by-step sequence diagram. Click any arrow to see details for that step.</p>
       </div>
       <div className="graph-section" style=${{maxWidth:'1000px'}}><${FlowSection} /></div>
